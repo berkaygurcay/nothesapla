@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Not Hesaplama Sistemi</title>
+<style>
+/* Modern & Minimalist Tasarım */
+:root {
+--primary-color: #2563eb;
+--bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+--card-bg: #ffffff;
+--text-main: #1e293b;
+}
+
+body {
+font-family: 'Inter', -apple-system, sans-serif;
+background: var(--bg-gradient);
+color: var(--text-main);
+display: flex;
+justify-content: center;
+align-items: center;
+min-height: 100vh;
+margin: 0;
+padding: 20px;
+}
+
+.card {
+background: var(--card-bg);
+padding: 40px;
+border-radius: 24px;
+box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+width: 100%;
+max-width: 450px;
+transition: transform 0.3s ease;
+}
+
+h2 {
+text-align: center;
+font-size: 24px;
+font-weight: 800;
+margin-bottom: 30px;
+letter-spacing: -0.5px;
+color: var(--primary-color);
+}
+
+.input-group {
+margin-bottom: 20px;
+}
+
+label {
+display: block;
+font-size: 14px;
+font-weight: 600;
+margin-bottom: 8px;
+color: #64748b;
+}
+
+input, select {
+width: 100%;
+padding: 14px;
+border: 2px solid #e2e8f0;
+border-radius: 12px;
+font-size: 16px;
+outline: none;
+transition: all 0.2s;
+box-sizing: border-box;
+}
+
+input:focus {
+border-color: var(--primary-color);
+box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.row {
+display: flex;
+gap: 12px;
+margin-top: 5px;
+}
+
+button {
+width: 100%;
+padding: 16px;
+background: var(--primary-color);
+color: white;
+border: none;
+border-radius: 12px;
+font-size: 16px;
+font-weight: 700;
+cursor: pointer;
+transition: all 0.2s;
+margin-top: 10px;
+}
+
+button:hover {
+background: #1d4ed8;
+transform: translateY(-1px);
+}
+
+#result {
+margin-top: 25px;
+padding: 20px;
+border-radius: 12px;
+text-align: center;
+font-weight: 700;
+display: none;
+animation: slideIn 0.4s ease-out;
+}
+
+@keyframes slideIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+.success { background: #dcfce7; color: #166534; }
+.error { background: #fee2e2; color: #991b1b; }
+
+.info-text {
+font-size: 12px;
+color: #94a3b8;
+text-align: center;
+margin-top: 15px;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h2>🎯 Hedef Notum Kaç?</h2>
+
+<div class="input-group">
+<label>Ek Değerlendirme Var mı?</label>
+<select id="hasExtra" onchange="toggleExtra()">
+<option value="no">Hayır, sadece Vize & Final</option>
+<option value="yes">Evet (Ödev, Quiz vb.)</option>
+</select>
+</div>
+
+<div id="extraCountArea" class="input-group" style="display:none;">
+<label>Ek Not Sayısı</label>
+<input type="number" id="extraCount" min="1" max="3" oninput="createExtraInputs()">
+</div>
+
+<div id="dynamicInputs"></div>
+
+<div class="input-group">
+<label id="mainLabel">Vize Detayları</label>
+<div class="row">
+<input type="number" id="mainWeight" placeholder="Ağırlık %" oninput="limitValue(this)">
+<input type="number" id="mainGrade" placeholder="Aldığın Not" oninput="limitValue(this)">
+</div>
+</div>
+
+<div class="input-group">
+<label>Hedeflenen Geçme Notu</label>
+<input type="number" id="targetPass" value="50" oninput="limitValue(this)">
+</div>
+
+<button onclick="calculate()">Final Notunu Hesapla</button>
+
+<div id="result"></div>
+
+<p class="info-text">Not: Final barajı otomatik 35 olarak hesaplanır.</p>
+</div>
+
+<script>
+// 100'den büyük girişi engelleyen fonksiyon
+function limitValue(input) {
+if (input.value > 100) input.value = 100;
+if (input.value < 0) input.value = 0;
+}
+
+function toggleExtra() {
+const hasExtra = document.getElementById('hasExtra').value;
+document.getElementById('extraCountArea').style.display = (hasExtra === 'yes') ? 'block' : 'none';
+if(hasExtra === 'no') document.getElementById('dynamicInputs').innerHTML = '';
+}
+
+function createExtraInputs() {
+const count = document.getElementById('extraCount').value;
+const container = document.getElementById('dynamicInputs');
+container.innerHTML = '';
+
+for(let i=1; i<=count; i++) {
+container.innerHTML += `
+<div class="input-group">
+<label>Ek Not ${i}</label>
+<div class="row">
+<input type="number" class="exW" placeholder="Ağırlık %" oninput="limitValue(this)">
+<input type="number" class="exG" placeholder="Not" oninput="limitValue(this)">
+</div>
+</div>`;
+}
+}
+
+function calculate() {
+const target = parseFloat(document.getElementById('targetPass').value) || 0;
+const vWeight = parseFloat(document.getElementById('mainWeight').value) || 0;
+const vGrade = parseFloat(document.getElementById('mainGrade').value) || 0;
+
+let currentPoints = (vGrade * vWeight) / 100;
+let totalWeightUsed = vWeight;
+
+const exWeights = document.querySelectorAll('.exW');
+const exGrades = document.querySelectorAll('.exG');
+
+exWeights.forEach((w, index) => {
+let weight = parseFloat(w.value) || 0;
+let grade = parseFloat(exGrades[index].value) || 0;
+currentPoints += (weight * grade) / 100;
+totalWeightUsed += weight;
+});
+
+const fWeight = 100 - totalWeightUsed;
+
+if (fWeight <= 0) {
+showResult("Ağırlıklar toplamı 100'den küçük olmalı!", "error");
+return;
+}
+
+const neededFinal = (target - currentPoints) / (fWeight / 100);
+const resultDiv = document.getElementById('result');
+
+if (neededFinal > 100) {
+showResult("🚨 Bu dersi geçmek matematiksel olarak imkansız görünüyor!", "error");
+} else {
+let finalNote = neededFinal < 35 ? 35 : neededFinal.toFixed(2);
+let message = `Finalden alman gereken not: <strong>${finalNote}</strong>`;
+if(neededFinal < 35) message += "<br><small>Final barajı (35) sebebiyle bu not alınmalıdır.</small>";
+showResult(message, "success");
+}
+}
+
+function showResult(msg, type) {
+const res = document.getElementById('result');
+res.innerHTML = msg;
+res.style.display = 'block';
+res.className = type;
+}
+</script>
+
+</body>
+</html>
