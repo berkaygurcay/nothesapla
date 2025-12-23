@@ -12,239 +12,168 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Not Hesaplama Sistemi</title>
+<title>Notum Kaç? | Not Hesaplama</title>
 <style>
-/* Modern & Minimalist Tasarım */
+/* Renk Değişkenleri - Hem Açık Hem Koyu Mod İçin */
 :root {
---primary-color: #2563eb;
---bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+--bg: #f8fafc;
 --card-bg: #ffffff;
---text-main: #1e293b;
+--text: #1e293b;
+--primary: #4f46e5;
+--border: #e2e8f0;
+}
+
+[data-theme="dark"] {
+--bg: #0f172a;
+--card-bg: #1e293b;
+--text: #f8fafc;
+--primary: #818cf8;
+--border: #334155;
 }
 
 body {
-font-family: 'Inter', -apple-system, sans-serif;
-background: var(--bg-gradient);
-color: var(--text-main);
+background-color: var(--bg);
+color: var(--text);
+font-family: 'Inter', sans-serif;
+transition: all 0.3s ease;
 display: flex;
 justify-content: center;
 align-items: center;
 min-height: 100vh;
 margin: 0;
-padding: 20px;
 }
 
-.card {
+.container {
 background: var(--card-bg);
-padding: 40px;
-border-radius: 24px;
-box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+padding: 30px;
+border-radius: 20px;
+box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 width: 100%;
-max-width: 450px;
-transition: transform 0.3s ease;
+max-width: 400px;
+border: 1px solid var(--border);
+position: relative;
 }
 
-h2 {
-text-align: center;
-font-size: 24px;
-font-weight: 800;
-margin-bottom: 30px;
-letter-spacing: -0.5px;
-color: var(--primary-color);
+/* Koyu Mod Butonu */
+.theme-toggle {
+position: absolute;
+top: 20px;
+right: 20px;
+cursor: pointer;
+font-size: 20px;
+background: none;
+border: none;
+color: var(--text);
 }
 
-.input-group {
-margin-bottom: 20px;
-}
-
-label {
-display: block;
-font-size: 14px;
-font-weight: 600;
-margin-bottom: 8px;
-color: #64748b;
-}
+h2 { text-align: center; margin-bottom: 25px; font-weight: 800; }
+.input-group { margin-bottom: 15px; }
+label { display: block; font-size: 14px; margin-bottom: 5px; font-weight: 600; opacity: 0.8; }
 
 input, select {
-width: 100%;
-padding: 14px;
-border: 2px solid #e2e8f0;
-border-radius: 12px;
-font-size: 16px;
-outline: none;
-transition: all 0.2s;
-box-sizing: border-box;
+width: 100%; padding: 12px; border: 2px solid var(--border);
+border-radius: 10px; background: var(--card-bg); color: var(--text);
+font-size: 16px; box-sizing: border-box; outline: none;
 }
 
-input:focus {
-border-color: var(--primary-color);
-box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+input:focus { border-color: var(--primary); }
+
+.row { display: flex; gap: 10px; }
+
+button.calc-btn {
+width: 100%; padding: 15px; background: var(--primary); color: white;
+border: none; border-radius: 10px; font-size: 16px; font-weight: bold;
+cursor: pointer; margin-top: 10px; transition: 0.2s;
 }
 
-.row {
-display: flex;
-gap: 12px;
-margin-top: 5px;
+button.calc-btn:hover { opacity: 0.9; transform: translateY(-2px); }
+
+#resultBox {
+margin-top: 20px; padding: 15px; border-radius: 10px;
+text-align: center; display: none; background: rgba(129, 140, 248, 0.1);
+border: 1px solid var(--primary);
 }
 
-button {
-width: 100%;
-padding: 16px;
-background: var(--primary-color);
-color: white;
-border: none;
-border-radius: 12px;
-font-size: 16px;
-font-weight: 700;
-cursor: pointer;
-transition: all 0.2s;
-margin-top: 10px;
-}
-
-button:hover {
-background: #1d4ed8;
-transform: translateY(-1px);
-}
-
-#result {
-margin-top: 25px;
-padding: 20px;
-border-radius: 12px;
-text-align: center;
-font-weight: 700;
-display: none;
-animation: slideIn 0.4s ease-out;
-}
-
-@keyframes slideIn {
-from { opacity: 0; transform: translateY(10px); }
-to { opacity: 1; transform: translateY(0); }
-}
-
-.success { background: #dcfce7; color: #166534; }
-.error { background: #fee2e2; color: #991b1b; }
-
-.info-text {
-font-size: 12px;
-color: #94a3b8;
-text-align: center;
-margin-top: 15px;
+.share-wa {
+display: block; margin-top: 10px; color: #25d366; text-decoration: none;
+font-weight: bold; font-size: 14px;
 }
 </style>
 </head>
-<body>
+<body data-theme="light">
 
-<div class="card">
-<h2>🎯 Hedef Notum Kaç?</h2>
-
-<div class="input-group">
-<label>Ek Değerlendirme Var mı?</label>
-<select id="hasExtra" onchange="toggleExtra()">
-<option value="no">Hayır, sadece Vize & Final</option>
-<option value="yes">Evet (Ödev, Quiz vb.)</option>
-</select>
-</div>
-
-<div id="extraCountArea" class="input-group" style="display:none;">
-<label>Ek Not Sayısı</label>
-<input type="number" id="extraCount" min="1" max="3" oninput="createExtraInputs()">
-</div>
-
-<div id="dynamicInputs"></div>
+<div class="container">
+<button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+<h2>🎯 Notum Kaç?</h2>
 
 <div class="input-group">
-<label id="mainLabel">Vize Detayları</label>
+<label>Vize Sınavı</label>
 <div class="row">
-<input type="number" id="mainWeight" placeholder="Ağırlık %" oninput="limitValue(this)">
-<input type="number" id="mainGrade" placeholder="Aldığın Not" oninput="limitValue(this)">
+<input type="number" id="vW" placeholder="Ağırlık %">
+<input type="number" id="vG" placeholder="Notun">
+</div>
+</div>
+
+<div class="input-group">
+<label>Ek Not (Ödev/Quiz) - Opsiyonel</label>
+<div class="row">
+<input type="number" id="eW" placeholder="Ağırlık %">
+<input type="number" id="eG" placeholder="Notun">
 </div>
 </div>
 
 <div class="input-group">
 <label>Hedeflenen Geçme Notu</label>
-<input type="number" id="targetPass" value="50" oninput="limitValue(this)">
+<input type="number" id="target" value="50">
 </div>
 
-<button onclick="calculate()">Final Notunu Hesapla</button>
+<button class="calc-btn" onclick="calculate()">Finalden Kaç Almalıyım?</button>
 
-<div id="result"></div>
-
-<p class="info-text">Not: Final barajı otomatik 35 olarak hesaplanır.</p>
+<div id="resultBox">
+<div id="resText" style="font-size: 18px; font-weight: bold;"></div>
+<a id="waLink" class="share-wa" target="_blank" href="#">📲 Arkadaşına Gönder</a>
+</div>
 </div>
 
 <script>
-// 100'den büyük girişi engelleyen fonksiyon
-function limitValue(input) {
-if (input.value > 100) input.value = 100;
-if (input.value < 0) input.value = 0;
-}
-
-function toggleExtra() {
-const hasExtra = document.getElementById('hasExtra').value;
-document.getElementById('extraCountArea').style.display = (hasExtra === 'yes') ? 'block' : 'none';
-if(hasExtra === 'no') document.getElementById('dynamicInputs').innerHTML = '';
-}
-
-function createExtraInputs() {
-const count = document.getElementById('extraCount').value;
-const container = document.getElementById('dynamicInputs');
-container.innerHTML = '';
-
-for(let i=1; i<=count; i++) {
-container.innerHTML += `
-<div class="input-group">
-<label>Ek Not ${i}</label>
-<div class="row">
-<input type="number" class="exW" placeholder="Ağırlık %" oninput="limitValue(this)">
-<input type="number" class="exG" placeholder="Not" oninput="limitValue(this)">
-</div>
-</div>`;
-}
+// Koyu Mod Geçiş Fonksiyonu
+function toggleTheme() {
+const body = document.body;
+const current = body.getAttribute('data-theme');
+body.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
 }
 
 function calculate() {
-const target = parseFloat(document.getElementById('targetPass').value) || 0;
-const vWeight = parseFloat(document.getElementById('mainWeight').value) || 0;
-const vGrade = parseFloat(document.getElementById('mainGrade').value) || 0;
+const vW = parseFloat(document.getElementById('vW').value) || 0;
+const vG = parseFloat(document.getElementById('vG').value) || 0;
+const eW = parseFloat(document.getElementById('eW').value) || 0;
+const eG = parseFloat(document.getElementById('eG').value) || 0;
+const target = parseFloat(document.getElementById('target').value) || 50;
 
-let currentPoints = (vGrade * vWeight) / 100;
-let totalWeightUsed = vWeight;
+const currentPoints = (vG * vW / 100) + (eG * eW / 100);
+const finalWeight = 100 - vW - eW;
 
-const exWeights = document.querySelectorAll('.exW');
-const exGrades = document.querySelectorAll('.exG');
-
-exWeights.forEach((w, index) => {
-let weight = parseFloat(w.value) || 0;
-let grade = parseFloat(exGrades[index].value) || 0;
-currentPoints += (weight * grade) / 100;
-totalWeightUsed += weight;
-});
-
-const fWeight = 100 - totalWeightUsed;
-
-if (fWeight <= 0) {
-showResult("Ağırlıklar toplamı 100'den küçük olmalı!", "error");
+if (finalWeight <= 0) {
+alert("Ağırlıklar toplamı 100 olmalı!");
 return;
 }
 
-const neededFinal = (target - currentPoints) / (fWeight / 100);
-const resultDiv = document.getElementById('result');
+const needed = (target - currentPoints) / (finalWeight / 100);
+const resBox = document.getElementById('resultBox');
+const resText = document.getElementById('resText');
 
-if (neededFinal > 100) {
-showResult("🚨 Bu dersi geçmek matematiksel olarak imkansız görünüyor!", "error");
+resBox.style.display = 'block';
+
+if (needed > 100) {
+resText.innerHTML = "Maalesef geçme ihtimali yok 💀<br><small>Gereken: " + needed.toFixed(1) + "</small>";
 } else {
-let finalNote = neededFinal < 35 ? 35 : neededFinal.toFixed(2);
-let message = `Finalden alman gereken not: <strong>${finalNote}</strong>`;
-if(neededFinal < 35) message += "<br><small>Final barajı (35) sebebiyle bu not alınmalıdır.</small>";
-showResult(message, "success");
-}
-}
+let finalNote = needed < 0 ? 0 : needed.toFixed(1);
+resText.innerHTML = "Finalden alman gereken: <span style='color:var(--primary); font-size:24px;'>" + finalNote + "</span>";
 
-function showResult(msg, type) {
-const res = document.getElementById('result');
-res.innerHTML = msg;
-res.style.display = 'block';
-res.className = type;
+// WhatsApp Paylaşım
+const shareText = `Kanka bu dersi geçmem için finalden ${finalNote} almam gerekiyormuş. Sen de hesapla: https://notumkac.com`;
+document.getElementById('waLink').href = "https://wa.me/?text=" + encodeURIComponent(shareText);
+}
 }
 </script>
 
