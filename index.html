@@ -12,170 +12,147 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Notum Kaç? | Not Hesaplama</title>
+<title>Notum Kaç? | Hesaplayıcı</title>
 <style>
-/* Renk Değişkenleri - Hem Açık Hem Koyu Mod İçin */
 :root {
---bg: #f8fafc;
---card-bg: #ffffff;
---text: #1e293b;
---primary: #4f46e5;
---border: #e2e8f0;
+--bg: #f8fafc; --card-bg: #ffffff; --text: #1e293b;
+--primary: #6366f1; --border: #e2e8f0; --input-bg: #ffffff; --danger: #ef4444;
 }
-
 [data-theme="dark"] {
---bg: #0f172a;
---card-bg: #1e293b;
---text: #f8fafc;
---primary: #818cf8;
---border: #334155;
+--bg: #0f172a; --card-bg: #1e293b; --text: #f8fafc;
+--primary: #818cf8; --border: #334155; --input-bg: #0f172a;
 }
-
 body {
-background-color: var(--bg);
-color: var(--text);
-font-family: 'Inter', sans-serif;
-transition: all 0.3s ease;
-display: flex;
-justify-content: center;
-align-items: center;
-min-height: 100vh;
-margin: 0;
+background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif;
+transition: all 0.3s ease; display: flex; flex-direction: column;
+justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px;
 }
-
 .container {
-background: var(--card-bg);
-padding: 30px;
-border-radius: 20px;
-box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-width: 100%;
-max-width: 400px;
-border: 1px solid var(--border);
-position: relative;
+background: var(--card-bg); padding: 30px; border-radius: 24px;
+box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); width: 100%; max-width: 450px;
+border: 1px solid var(--border); position: relative;
 }
-
-/* Koyu Mod Butonu */
 .theme-toggle {
-position: absolute;
-top: 20px;
-right: 20px;
-cursor: pointer;
-font-size: 20px;
-background: none;
-border: none;
-color: var(--text);
+position: absolute; top: 25px; right: 25px; cursor: pointer;
+font-size: 22px; background: none; border: none; color: var(--text);
 }
-
-h2 { text-align: center; margin-bottom: 25px; font-weight: 800; }
-.input-group { margin-bottom: 15px; }
-label { display: block; font-size: 14px; margin-bottom: 5px; font-weight: 600; opacity: 0.8; }
-
-input, select {
-width: 100%; padding: 12px; border: 2px solid var(--border);
-border-radius: 10px; background: var(--card-bg); color: var(--text);
-font-size: 16px; box-sizing: border-box; outline: none;
+h2 { text-align: center; margin-bottom: 30px; font-weight: 800; background: linear-gradient(to right, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.input-group { margin-bottom: 20px; }
+label { display: block; font-size: 13px; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; opacity: 0.7; }
+input {
+width: 100%; padding: 14px; border: 2px solid var(--border);
+border-radius: 12px; background: var(--input-bg); color: var(--text);
+font-size: 16px; box-sizing: border-box; outline: none; transition: 0.2s;
 }
-
-input:focus { border-color: var(--primary); }
-
-.row { display: flex; gap: 10px; }
-
-button.calc-btn {
-width: 100%; padding: 15px; background: var(--primary); color: white;
-border: none; border-radius: 10px; font-size: 16px; font-weight: bold;
-cursor: pointer; margin-top: 10px; transition: 0.2s;
+.row { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+.btn-add {
+background: rgba(99, 102, 241, 0.1); color: var(--primary);
+border: 2px dashed var(--primary); padding: 10px; border-radius: 12px;
+width: 100%; cursor: pointer; font-weight: 700; margin-bottom: 20px; transition: 0.2s;
 }
-
-button.calc-btn:hover { opacity: 0.9; transform: translateY(-2px); }
-
+.btn-remove {
+background: var(--danger); color: white; border: none;
+border-radius: 10px; padding: 12px; cursor: pointer; font-weight: bold;
+}
+.calc-btn {
+width: 100%; padding: 16px; background: var(--primary); color: white;
+border: none; border-radius: 12px; font-size: 16px; font-weight: 800;
+cursor: pointer; transition: 0.3s;
+}
 #resultBox {
-margin-top: 20px; padding: 15px; border-radius: 10px;
-text-align: center; display: none; background: rgba(129, 140, 248, 0.1);
+margin-top: 25px; padding: 20px; border-radius: 16px;
+text-align: center; display: none; background: rgba(99, 102, 241, 0.1);
 border: 1px solid var(--primary);
 }
-
 .share-wa {
-display: block; margin-top: 10px; color: #25d366; text-decoration: none;
-font-weight: bold; font-size: 14px;
+display: inline-flex; align-items: center; justify-content: center;
+margin-top: 15px; color: #25d366; text-decoration: none;
+font-weight: 700; font-size: 14px; gap: 8px;
 }
+footer { margin-top: 30px; font-size: 12px; opacity: 0.5; text-align: center; }
 </style>
 </head>
-<body data-theme="light">
+<body data-theme="dark">
 
 <div class="container">
 <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
 <h2>🎯 Notum Kaç?</h2>
 
 <div class="input-group">
-<label>Vize Sınavı</label>
+<label>Vize Sınavı (Zorunlu)</label>
 <div class="row">
-<input type="number" id="vW" placeholder="Ağırlık %">
-<input type="number" id="vG" placeholder="Notun">
+<input type="number" id="vW" placeholder="Ağırlık %" oninput="limit(this)">
+<input type="number" id="vG" placeholder="Notun" oninput="limit(this)">
 </div>
 </div>
+
+<label>Ek Değerlendirmeler</label>
+<div id="dynamicArea"></div>
+<button class="btn-add" onclick="addNoteRow()">+ Not Ekle</button>
 
 <div class="input-group">
-<label>Ek Not (Ödev/Quiz) - Opsiyonel</label>
-<div class="row">
-<input type="number" id="eW" placeholder="Ağırlık %">
-<input type="number" id="eG" placeholder="Notun">
-</div>
+<label>Hedeflenen Ortalama</label>
+<input type="number" id="target" value="50" oninput="limit(this)">
 </div>
 
-<div class="input-group">
-<label>Hedeflenen Geçme Notu</label>
-<input type="number" id="target" value="50">
-</div>
-
-<button class="calc-btn" onclick="calculate()">Finalden Kaç Almalıyım?</button>
+<button class="calc-btn" onclick="calculate()">Hesapla</button>
 
 <div id="resultBox">
-<div id="resText" style="font-size: 18px; font-weight: bold;"></div>
-<a id="waLink" class="share-wa" target="_blank" href="#">📲 Arkadaşına Gönder</a>
+<div style="font-size: 14px; opacity: 0.8; margin-bottom: 5px;">Finalden alman gereken:</div>
+<div id="resScore" style="font-size: 42px; font-weight: 900; color: var(--primary);"></div>
+<a id="waLink" class="share-wa" target="_blank" href="#">📲 Sonucu Paylaş</a>
 </div>
 </div>
 
+<footer>© 2025 NotumKac.com | Berkay Gürçay</footer>
+
 <script>
-// Koyu Mod Geçiş Fonksiyonu
+function limit(i) { if(i.value > 100) i.value = 100; if(i.value < 0) i.value = 0; }
 function toggleTheme() {
 const body = document.body;
-const current = body.getAttribute('data-theme');
-body.setAttribute('data-theme', current === 'light' ? 'dark' : 'light');
+body.setAttribute('data-theme', body.getAttribute('data-theme') === 'light' ? 'dark' : 'light');
+}
+
+function addNoteRow() {
+const div = document.createElement('div');
+div.className = 'row note-row';
+div.innerHTML = `
+<input type="number" class="exW" placeholder="Ağ. %" oninput="limit(this)">
+<input type="number" class="exG" placeholder="Not" oninput="limit(this)">
+<button class="btn-remove" onclick="this.parentElement.remove()">X</button>
+`;
+document.getElementById('dynamicArea').appendChild(div);
 }
 
 function calculate() {
+const target = parseFloat(document.getElementById('target').value) || 50;
 const vW = parseFloat(document.getElementById('vW').value) || 0;
 const vG = parseFloat(document.getElementById('vG').value) || 0;
-const eW = parseFloat(document.getElementById('eW').value) || 0;
-const eG = parseFloat(document.getElementById('eG').value) || 0;
-const target = parseFloat(document.getElementById('target').value) || 50;
 
-const currentPoints = (vG * vW / 100) + (eG * eW / 100);
-const finalWeight = 100 - vW - eW;
+let currentPoints = (vG * vW / 100);
+let totalWeightUsed = vW;
 
-if (finalWeight <= 0) {
-alert("Ağırlıklar toplamı 100 olmalı!");
-return;
-}
+document.querySelectorAll('.exW').forEach((w, i) => {
+let weight = parseFloat(w.value) || 0;
+let grade = parseFloat(document.querySelectorAll('.exG')[i].value) || 0;
+currentPoints += (weight * grade / 100);
+totalWeightUsed += weight;
+});
+
+const finalWeight = 100 - totalWeightUsed;
+if (finalWeight <= 0) { alert("Ağırlıklar toplamı 100'ü geçemez!"); return; }
 
 const needed = (target - currentPoints) / (finalWeight / 100);
 const resBox = document.getElementById('resultBox');
-const resText = document.getElementById('resText');
-
 resBox.style.display = 'block';
 
-if (needed > 100) {
-resText.innerHTML = "Maalesef geçme ihtimali yok 💀<br><small>Gereken: " + needed.toFixed(1) + "</small>";
-} else {
-let finalNote = needed < 0 ? 0 : needed.toFixed(1);
-resText.innerHTML = "Finalden alman gereken: <span style='color:var(--primary); font-size:24px;'>" + finalNote + "</span>";
+const finalResult = needed < 0 ? 0 : needed.toFixed(1);
+document.getElementById('resScore').innerText = finalResult;
 
-// WhatsApp Paylaşım
-const shareText = `Kanka bu dersi geçmem için finalden ${finalNote} almam gerekiyormuş. Sen de hesapla: https://notumkac.com`;
+// WhatsApp Share
+const shareText = `NotumKac.com ile hesapladım! Bu dersi geçmem için finalden ${finalResult} almam gerekiyormuş.`;
 document.getElementById('waLink').href = "https://wa.me/?text=" + encodeURIComponent(shareText);
 }
-}
 </script>
-
 </body>
 </html>
